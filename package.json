@@ -1,22 +1,20 @@
 {
-  "name": "electron-quick-start",
+  "name": "Spots",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "An application to control Spotify",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/aeonblue3/spots",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Spotify"
   ],
-  "author": "GitHub",
+  "author": "Chris Neitzer <chris@neitzer.com>",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^1.4.1"
+    "electron": "^1.4.1",
+    "octicons": "^5.0.1",
+    "spotify-helper": "1.0.1"
   }
 }
