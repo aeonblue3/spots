@@ -2,9 +2,36 @@
 <html>
   <head>
     <meta charset="UTF-8">
+
     <title>Hello World!</title>
+
+    <style>
+      body {
+        font: caption;
+        color: #F7F7F7
+      }
+
+      #player_controls {
+        color: #9E9E9E
+      }
+
+      #player_controls a:hover {
+        color: #F7F7F7;
+      }
+    </style>
   </head>
   <body>
+    <div class="information-wrapper">
+      <div class="artist">
+        <p>Artist: <span id="artist_name"></span></p>
+      </div>
+      <div class="album">
+        <p>Album: <span id="album_name"></span></p>
+      </div>
+      <div class="track">
+        <p>Track: <span id="track_name"></span></p>
+      </div>
+    </div>
     <h1>Hello World!</h1>
     <!-- All of the Node.js APIs are available in this renderer process. -->
     We are using Node.js <script>document.write(process.versions.node)</script>,
