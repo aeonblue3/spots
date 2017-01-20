@@ -21,6 +21,9 @@
     </style>
   </head>
   <body>
+    <div class="album-art">
+      <img src="" alt="" id="album_art">
+    </div>
     <div class="information-wrapper">
       <div class="artist">
         <p>Artist: <span id="artist_name"></span></p>
@@ -32,15 +35,9 @@
         <p>Track: <span id="track_name"></span></p>
       </div>
     </div>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
   </body>
 
   <script>
-    // You can also require other files to run in this process
     require('./renderer.js')
   </script>
 </html>
