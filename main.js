@@ -7,32 +7,19 @@ const {BrowserWindow, Tray, Menu, MenuItem, app, ipcMain} = require('electron')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-  , tray, track_info;
+  , tray
+  , track_info
+  , menu;
 
-const menu = new Menu();
-// menu.append(new MenuItem({ label: 'Hello' }));
-// menu.append(new MenuItem({ type: 'separator' }));
-menu.append(new MenuItem({ label: 'Quit', type: 'normal', role: 'quit' }));
-
-app.on('browser-window-created', (event, win) => {
-  win.webContents.on('context-menu', (e, params) => {
-    menu.popup(win, params.x, params.y);
-  });
-});
-
-// Listener to update artist name in menu bar
-ipcMain.on("send-artist", (event, data) => {
-  if (JSON.stringify(data) !== JSON.stringify(track_info)) {
-    track_info = data;
-    tray.setTitle(" " + data.artist);
-    tray.setToolTip("Artist: " + data.artist + "\nAlbum: " + data.album + "\nTrack: " + data.track);
-  }
-});
-
-ipcMain.on('show-context-menu', (event) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  menu.popup(win);
-})
+/**
+ * Create context menu with Quit.
+ * 
+ * @return void
+ */
+function createMenu() {
+  menu = new Menu();
+  menu.append(new MenuItem({ label: 'Quit', type: 'normal', role: 'quit' }));
+}
 
 /**
  * Instantiate an instance of BrowserWindow
@@ -86,16 +73,21 @@ function createTray () {
 
   tray.on('click', () => {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-  })
+  });
+
   mainWindow.on('show', () => {
     tray.setHighlightMode('always');
-  })
+  });
+
   mainWindow.on('hide', () => {
     tray.setHighlightMode('never');
-  })
+  });
 }
 
-app.dock.hide();
+process.platform === "darwin" && app.dock.hide();
+
+// Listeners
+// The app listens on these events in order to trigger their functionality
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -111,13 +103,23 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
-})
+// Create the context menu
+app.on('browser-window-created', (event, win) => {
+  win.webContents.on('context-menu', (e, params) => {
+    menu.popup(win, params.x, params.y);
+  });
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// Listener to update artist name in menu bar
+ipcMain.on("send-artist", (event, data) => {
+  if (JSON.stringify(data) !== JSON.stringify(track_info)) {
+    track_info = data;
+    tray.setTitle(" " + data.artist);
+    tray.setToolTip("Artist: " + data.artist + "\nAlbum: " + data.album + "\nTrack: " + data.track);
+  }
+});
+
+ipcMain.on('show-context-menu', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  menu.popup(win);
+});
