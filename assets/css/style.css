@@ -79,7 +79,6 @@ body {
 
 #player_controls {
   clear: both;
-  color: #9E9E9E;
   text-align: center;
   padding-top: 3.125em;
 }
@@ -90,9 +89,10 @@ body {
 
 #player_controls a i {
   text-decoration: none;
-  color: #F7F7F7;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 3em;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 #player_controls a#play i {
@@ -100,12 +100,22 @@ body {
 }
 
 #player_controls a:hover i {
-  color: #F7F7F7;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 #context_menu {
   padding: 5px;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 7px;
+  right: 7px;
+  cursor: pointer;
+}
+
+#context_menu i {
+  font-size: 1.25em;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+#context_menu i:hover {
+  color: rgba(255, 255, 255, 0.4);
 }
