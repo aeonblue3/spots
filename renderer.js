@@ -7,6 +7,13 @@ const {remote, ipcRenderer} = require("electron")
 
 let spotify = new SpotifyHelper();
 let artist, album, track;
+
+// Tell main process to show the menu when demo button is clicked
+const contextMenuBtn = document.getElementById('context_menu')
+contextMenuBtn.addEventListener('click', () => {
+  ipcRenderer.send('show-context-menu');
+});
+
 /**
  * Change the image in the dom to the album image
  * 
@@ -15,7 +22,9 @@ let artist, album, track;
  * @return void
  */
 function displayAlbumImage(data) {
-  document.getElementById("album_art").src = data.body.images[data.body.images.length - 1].url;
+  var img_index = 0;
+
+  document.getElementById("album_art").src = data.body.images[img_index].url;
 }
 /**
  * Get the album info from spotify
@@ -49,20 +58,32 @@ function setSongInfo (data) {
   document.getElementById("album_name").innerText = album;
   document.getElementById("track_name").innerText = track;
 
-  ipcRenderer.send("send-artist", artist);
+  ipcRenderer.send("send-artist", {"artist": artist, "album": album, "track": track});
 }
 
 /**
  * Temporary method to test the getStatus method.
  */
 function getCurrentSong() {
-  return spotify.init().then(function() {
+  return spotify.init().then(() => {
     return spotify.getStatus(1).then(setSongInfo);
   })
-  .catch(function (err) {
+  .catch((err) => {
     console.error("Spotify may not be running: " + err); // Catch any errors thrown from the methods.
   });
 }
+
+document.getElementById("play").addEventListener('click', () => {
+  return spotify.play();
+})
+
+// document.getElementById("prev").addEventListener('click', function(event) {
+//   ipcRenderer.send("prev");
+// })
+
+// document.getElementById("next").addEventListener('click', function(event) {
+//   ipcRenderer.send("next");
+// })
 
 getCurrentSong();
 setInterval(function() {

@@ -1,17 +1,37 @@
 'use strict';
 
-const {BrowserWindow, Tray, app, ipcMain} = require('electron')
+const {BrowserWindow, Tray, Menu, MenuItem, app, ipcMain} = require('electron')
   , path = require('path')
   , url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-  , tray;
+  , tray, track_info;
+
+const menu = new Menu();
+// menu.append(new MenuItem({ label: 'Hello' }));
+// menu.append(new MenuItem({ type: 'separator' }));
+menu.append(new MenuItem({ label: 'Quit', type: 'normal', role: 'quit' }));
+
+app.on('browser-window-created', (event, win) => {
+  win.webContents.on('context-menu', (e, params) => {
+    menu.popup(win, params.x, params.y);
+  });
+});
 
 // Listener to update artist name in menu bar
-ipcMain.on("send-artist", (event, artist) => {
-  tray.setTitle(artist);
+ipcMain.on("send-artist", (event, data) => {
+  if (JSON.stringify(data) !== JSON.stringify(track_info)) {
+    track_info = data;
+    tray.setTitle(" " + data.artist);
+    tray.setToolTip("Artist: " + data.artist + "\nAlbum: " + data.album + "\nTrack: " + data.track);
+  }
+});
+
+ipcMain.on('show-context-menu', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  menu.popup(win);
 })
 
 /**
@@ -20,18 +40,20 @@ ipcMain.on("send-artist", (event, artist) => {
  * @return void
  */
 function createWindow () {
-  const tray_position = tray.getBounds();
-
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const window_options = {
       width: 460
-    , height: 300
-    , x: tray_position.x
-    , y: tray_position.y
+    , height: 250
     , frame: false
     , show: false
-    , backgroundColor: "#333333"
-  });
+    , backgroundColor: (process.platform !== "darwin") ? "#333333" : undefined
+    , movable: false
+    , minimizable:false
+    , maximizable:false
+    , fullscreenable: false
+    , vibrancy: "ultra-dark"
+  };
+  // Create the browser window.
+  mainWindow = new BrowserWindow(window_options);
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -41,10 +63,10 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -73,13 +95,15 @@ function createTray () {
   })
 }
 
+app.dock.hide();
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createTray);
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
@@ -87,7 +111,7 @@ app.on('window-all-closed', function () {
   }
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
