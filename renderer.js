@@ -6,7 +6,7 @@ const {remote, ipcRenderer} = require("electron")
   , SpotifyHelper = require("spotify-helper");
 
 let spotify = new SpotifyHelper();
-let artist, album, track;
+let artist, album, track, playing;
 
 // Tell main process to show the menu when demo button is clicked
 const contextMenuBtn = document.getElementById('context_menu')
@@ -53,10 +53,13 @@ function setSongInfo (data) {
   artist = data.track.artist_resource.name;
   album = data.track.album_resource.name;
   track = data.track.track_resource.name;
+  playing = data.playing;
   
   document.getElementById("artist_name").innerText = artist;
   document.getElementById("album_name").innerText = album;
   document.getElementById("track_name").innerText = track;
+
+  document.getElementById("play").childNodes[0].className = (playing) ? "icon-pause" : "icon-play3";
 
   ipcRenderer.send("send-artist", {"artist": artist, "album": album, "track": track});
 }
@@ -74,7 +77,7 @@ function getCurrentSong() {
 }
 
 document.getElementById("play").addEventListener('click', () => {
-  return spotify.play();
+  return spotify[(playing) ? "pause" : "play"]().then(setSongInfo);
 })
 
 // document.getElementById("prev").addEventListener('click', function(event) {
