@@ -5,36 +5,32 @@
 
     <title>Hello World!</title>
 
-    <style>
-      body {
-        font: caption;
-        color: #F7F7F7
-      }
-
-      #player_controls {
-        color: #9E9E9E
-      }
-
-      #player_controls a:hover {
-        color: #F7F7F7;
-      }
-    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/icons.css">
   </head>
   <body>
-    <div class="album-art">
-      <img src="" alt="" id="album_art">
+    <div class="wrapper">
+      <div id="album_art_wrapper">
+        <img src="" alt="" id="album_art">
+      </div>
+      <div id="information_wrapper">
+        <div class="artist">
+          <p>Artist: <span id="artist_name"></span></p>
+        </div>
+        <div class="album">
+          <p>Album: <span id="album_name"></span></p>
+        </div>
+        <div class="track">
+          <p>Track: <span id="track_name"></span></p>
+        </div>
+      </div>
     </div>
-    <div class="information-wrapper">
-      <div class="artist">
-        <p>Artist: <span id="artist_name"></span></p>
-      </div>
-      <div class="album">
-        <p>Album: <span id="album_name"></span></p>
-      </div>
-      <div class="track">
-        <p>Track: <span id="track_name"></span></p>
-      </div>
+    <div id="player_controls">
+      <a id="prev"><i class="icon-previous"></i></a>
+      <a id="play"><i class="icon-play3"></i></a>
+      <a id="next"><i class="icon-next"></i></a>
     </div>
+    <div id="context_menu"><i class="icon-cog"></i></div>
   </body>
 
   <script>
